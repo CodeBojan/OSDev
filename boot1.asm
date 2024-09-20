@@ -6,8 +6,17 @@ jmp _start
 %include "print_hex.asm"
 
 _start:
-			print_hex hex, 0
+			xor ax, ax
+			mov ds, ax
+			mov es, ax
+			INT 0x12
+			mov bx, ax
+			xor ax, ax
+			print_hex_address hex, 4
+			print_hex_value 17, 2
+			
 			jmp $
+			; 175 - >>
 hex: 		dw 0xFECA
 times 510 - ($ - $$) db 0
 dw			0xAA55
