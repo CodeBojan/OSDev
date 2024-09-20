@@ -20,6 +20,7 @@ bits 16
 	print_hex_value_loop:
 		cmp cx, 0
 		je print_hex_value_end
+		
 		push bx
 		mov dx, bx
 		shr dx, 12

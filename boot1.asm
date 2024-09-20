@@ -13,7 +13,7 @@ _start:
 			mov bx, ax
 			xor ax, ax
 			print_hex_address hex, 4
-			print_hex_value 17, 2
+			print_hex_value bx, 4
 			
 			jmp $
 			; 175 - >>
