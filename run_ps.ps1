@@ -2,6 +2,7 @@ $bootloader = "boot1.bin"
 $disk_image = "floppy.img"
 $raised = $false
 
+qemu-img create -f raw floppy.img 1440K
 nasm -f bin -o boot1.bin boot1.asm
 
 try{
@@ -14,11 +15,12 @@ $disk_image_file.Close()
 }
 catch{
 	$error_message = $_
-	Write-Error -Message Writing Failed! $error_message
+	Write-Warning -Message "Writing Failed! $($error_message)"
 	$raised = $true
 }
 if(!$raised){
-Write-Host "Written successfully!"
+	Write-Host "Bootloader written onto disk image."
+	qemu-system-x86_64 -drive format=raw,file=floppy.img
 }
-qemu-system-x86_64 -drive format=raw,file=floppy.img
+
 
