@@ -8,18 +8,20 @@ jmp _start
 %include "print.asm"
 
 _start:
-		reset:
-			mov ah, 0
-			mov dl, 0
-			int 0x13
-			jc reset
+		print_hex_address hex, 4
+		;reset:
+		;	mov ah, 0
+		;	mov dl, 0
+		;	int 0x13
+		;	jc reset
 			
-			mov ax, 0x1000
-			mov es, ax
-			xor bx, bx
+		;	mov ax, 0x1000
+		;	mov es, ax
+		;	xor bx, bx
 			
-			load_second_bootloader
-			jmp 0x1000:0x0
+		;	load_second_bootloader
+		;	jmp 0x1000:0x0
+		jmp $
 			
 			
 hex: 		dw 0x1C00

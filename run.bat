@@ -8,6 +8,4 @@ IF %result% EQU 0 (
 ) ELSE (
     ECHO Build failed with error code %result%. See output for more info.
 )
-cd ..
-bochs
-cd build
+qemu-system-x86_64 -drive format=raw,file=boot1.bin
