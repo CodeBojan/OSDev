@@ -36,10 +36,9 @@ load_disk:
 	ret
 	
 load_execution_error:   ; do NOT use these labels outside of load_disk routine!
-	print error_message
+	print load_execution_error_message
 	ret
 	
 load_error:
-	print error_message1
+	print load_completion_error_message
 	ret
-	

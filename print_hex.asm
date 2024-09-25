@@ -1,6 +1,6 @@
 bits 16
-%macro print_hex_value 2
-
+%macro print_hex_value 2 ; this is used with constants (directly e.g. 0xAB as parameter), but always put 4 as the number of digits to be printed
+							; because that is the size of the register (2B)
 	mov cx, %2
 	cmp cx, 0
 	je %%_print_hex_value_termination
@@ -17,6 +17,7 @@ bits 16
 	INT 0x10
 	mov al, 'x'
 	INT 0x10
+	
 	%%_print_hex_value_loop:
 		cmp cx, 0
 		je %%_print_hex_value_end
@@ -36,7 +37,6 @@ bits 16
 		sub dl, 10
 		mov al, 'A'
 		add al, dl
-		
 		
 	%%_print_hex_value_loop_end:
 		INT 0x10
