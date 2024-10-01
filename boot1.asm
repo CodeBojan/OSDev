@@ -1,44 +1,35 @@
 org			0x7C00
+
+
 bits		16
 
 jmp _start
 
 %include "print_hex.asm"
 %include "print.asm"
-;%include "load.asm" 		; since load.asm uses print.asm, it needs to go below print.asm.
+%include "load.asm" 		
+							; since load.asm uses print.asm, it needs to go below print.asm.
 							; macro vs routine: macro can be written in a file that is included, but if not used, it is not present in the bin file.
 							; Routines are always present, but are present only once.
-hex: 		dw 0x1C00
-;load_execution_error_message:      	db `\r\nLoad execution error has ocurred.\n\r`, 0
-;load_completion_error_message:      db `\r\nNot enough sectors loaded.\n\r`, 0
+load_execution_error_message:      	db `\r\nLoad execution error has ocurred.\n\r`, 0
+load_completion_error_message:      db `\r\nNot enough sectors loaded.\n\r`, 0
+protected_mode_message:		db `\r\nLanded in 32-bit Protected mode\n\r`, 0
 real_mode_message:			db `\r\nStarted 16-bit Real Mode\n\r`, 0
-
-;BOOT_DRIVE: db 0
+kernel_loading_message:		db `\r\nLoading kernel into memory\n\r`, 0 
+BOOT_DRIVE:					db 0
+KERNEL_OFFSET equ 0x1000	
 
 _start:
 		print real_mode_message
-		;mov [BOOT_DRIVE], dl
-		
-		; This was used to reset the floppy controller, but it doesn't look like it's needed?
-		;reset: 
-		;	mov ah, 0
-		;	mov dl, 0
-		;	int 0x13
-		;	jc reset
-		
-		;mov bp, 0x8000
-		;mov sp, bp
-		
-		;mov bx, 0x9000
-		;mov dh, 5
-		;mov dl, [BOOT_DRIVE]
-		
+		mov [BOOT_DRIVE], dl
+		mov bp, 0x9000		 ; set up the stack
+		mov sp, bp
+		load_kernel
 		;call load_disk			; loading some bytes after the end of the bootloader for demonstration purposes
 		;print_hex_address 0x9000, 4
 		;print_hex_address 0x9000 + 512, 4
 		
-		mov bp, 0x9000		; ?
-		mov sp, bp
+		
 		
 		call switch_to_pm
 			
@@ -53,6 +44,7 @@ _start:
 		mov cr0, eax
 		jmp CODE_SEGMENT:init_pm
 bits 32
+[extern start]
 %include "print_32.asm" ; has to be below the 16 bit code, because of 'bits 16' directive
 		
 	init_pm:
@@ -67,10 +59,9 @@ bits 32
 		mov esp, ebp
 		 
 		print_32 protected_mode_message
+		call KERNEL_OFFSET
 		jmp $
 
-
-protected_mode_message:		db `\r\nLanded in 32-bit Protected mode\n\r`, 0
 ; GDT in basic flat model -  has one code and one data segment
 ; GDT works as follows: if I want to use fs, ds, cs and other segment registers
 ; with this 'protected' mode, I have to initialize them with segment selectors,
