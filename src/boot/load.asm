@@ -1,20 +1,11 @@
 bits 16
 
 %macro load_kernel 0
-	%%_read:
-		mov ah, 0x02
-		mov al, 1
-		mov ch, 1
-		mov cl, 2
-		mov dh, 0
-		mov dl, 0
-		
-		mov bx, 0xA0000
-		mov es, bx
-		mov bx, 0x1234 ; the data will be read at 0xA1234 - 0xA000:0x1234 = 0xA000 * 16 + 0x1234 = 0xA00000 + 0x1234 = 0xA1234
-		
-		int 0x13
-		jc %%_read
+	print kernel_loading_message
+	mov bx, KERNEL_OFFSET
+	mov dh, 15
+	mov dl, [BOOT_DRIVE]
+	call load_disk
 %endmacro
 
 load_disk:
@@ -36,10 +27,9 @@ load_disk:
 	ret
 	
 load_execution_error:   ; do NOT use these labels outside of load_disk routine!
-	print error_message
+	print load_execution_error_message
 	ret
 	
 load_error:
-	print error_message1
+	print load_completion_error_message
 	ret
-	
