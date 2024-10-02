@@ -5,9 +5,9 @@ bits		16
 
 jmp _start
 
-%include "print_hex.asm"
-%include "print.asm"
-%include "load.asm" 		
+%include "src/boot/print_hex.asm"
+%include "src/boot/print.asm"
+%include "src/boot/load.asm" 		
 							; since load.asm uses print.asm, it needs to go below print.asm.
 							; macro vs routine: macro can be written in a file that is included, but if not used, it is not present in the bin file.
 							; Routines are always present, but are present only once.
@@ -45,7 +45,7 @@ _start:
 		jmp CODE_SEGMENT:init_pm
 bits 32
 [extern start]
-%include "print_32.asm" ; has to be below the 16 bit code, because of 'bits 16' directive
+%include "src/boot/print_32.asm" ; has to be below the 16 bit code, because of 'bits 16' directive
 		
 	init_pm:
 		mov ax, DATA_SEGMENT	; old segments are meaningless, so now the segment registers need to point at the new data segment in GDT
